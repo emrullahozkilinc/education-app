@@ -14,6 +14,7 @@ public class User {
     @Getter
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Setter
@@ -34,6 +35,6 @@ public class User {
     @Setter
     @Getter
     @Column(name = "type", nullable = false)
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Type type;
 }
