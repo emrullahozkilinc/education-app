@@ -6,15 +6,16 @@ import com.example.educationapp.exception.UserAddException;
 import com.example.educationapp.exception.UserNotFoundError;
 import com.example.educationapp.exception.UserNotFoundException;
 import com.example.educationapp.repos.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,15 +34,8 @@ public class UserRest {
     }
 
     @PostMapping("/addUser")
-    ResponseEntity<String> addUser(@Valid @RequestBody User user, BindingResult binRes){
-        try{
-            userRepository.save(user);
-        }catch (Exception e){
-            throw new UserAddException("User cannot add."+
-                    binRes.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("\n")));
-        }
+    ResponseEntity<String> addUser(@Valid @RequestBody User user){
+        userRepository.save(user);
         return new ResponseEntity<String>("User added.",HttpStatus.OK);
     }
 
@@ -69,10 +63,18 @@ public class UserRest {
     }
 
     @ExceptionHandler
-    public ResponseEntity<UserAddError> handleAddUser(UserAddException exc){
+    public ResponseEntity<UserAddError> handleAddUser(MethodArgumentNotValidException exc){
+
+        List<String> excs=new LinkedList<>();
+        excs.addAll(exc.getBindingResult()
+                .getAllErrors().stream()
+                .map(x -> x.getDefaultMessage())
+                .collect(Collectors.toList()));
+
         return new ResponseEntity<UserAddError>(
-                new UserAddError("error", exc.getMessage()),
+                new UserAddError("error", excs),
                 HttpStatus.BAD_REQUEST
         );
+
     }
 }

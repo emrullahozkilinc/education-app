@@ -2,6 +2,8 @@ package com.example.educationapp.exception;
 
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class UserAddError {
@@ -9,7 +11,7 @@ public class UserAddError {
     @Setter
     String status;
 
-    @Setter
     @Getter
-    String message;
+    @Setter
+    List<String> message;
 }
