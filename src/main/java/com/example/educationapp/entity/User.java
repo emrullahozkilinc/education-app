@@ -6,15 +6,18 @@ import lombok.Setter;
 import javax.persistence.*;
 
 import com.example.educationapp.enums.Type;
+import com.example.educationapp.conf.*;
+import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "users")
+@TypeDef(name = "usertype", typeClass = PostgreSQLEnumType.class)
 public class User {
     @Setter
     @Getter
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Setter
@@ -36,5 +39,6 @@ public class User {
     @Getter
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @org.hibernate.annotations.Type(type = "usertype")
     private Type type;
 }
