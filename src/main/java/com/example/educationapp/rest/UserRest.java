@@ -1,12 +1,13 @@
 package com.example.educationapp.rest;
 
 import com.example.educationapp.entity.User;
+import com.example.educationapp.exception.UserNotFoundError;
+import com.example.educationapp.exception.UserNotFoundException;
 import com.example.educationapp.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +26,31 @@ public class UserRest {
     }
 
     @PostMapping("/addUser")
-    void addUser(@RequestBody User user){
+    ResponseEntity<String> addUser(@RequestBody User user){
         userRepository.save(user);
+        return new ResponseEntity<String>("User added.",HttpStatus.OK);
+    }
+
+    @GetMapping("/getUser/{id}")
+    User getUser(@PathVariable int id){
+        return userRepository
+                .findById(id)
+                .orElseThrow(() ->new UserNotFoundException("User Not Found"));
+    }
+
+    @DeleteMapping("/delUser/{id}")
+    ResponseEntity<String> delUser(@PathVariable int id){
+        userRepository.delete(userRepository
+                .findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User Not Found")));
+        return new ResponseEntity<String>("User Deleted",HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<UserNotFoundError> handleUserNotFound(UserNotFoundException exc){
+        return new ResponseEntity<UserNotFoundError>(
+                new UserNotFoundError("error", exc.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
     }
 }

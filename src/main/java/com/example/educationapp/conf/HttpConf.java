@@ -13,6 +13,8 @@ public class HttpConf extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST,"/addUser").permitAll()
+                .antMatchers(HttpMethod.DELETE,"/delUser/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/getUser/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/getUsers").permitAll()
                 .anyRequest().authenticated();
     }
