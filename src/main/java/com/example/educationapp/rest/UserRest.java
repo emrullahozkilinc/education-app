@@ -2,19 +2,16 @@ package com.example.educationapp.rest;
 
 import com.example.educationapp.entity.User;
 import com.example.educationapp.exception.UserAddError;
-import com.example.educationapp.exception.UserAddException;
 import com.example.educationapp.exception.UserNotFoundError;
 import com.example.educationapp.exception.UserNotFoundException;
 import com.example.educationapp.repos.UserRepository;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +33,7 @@ public class UserRest {
     @PostMapping("/addUser")
     ResponseEntity<String> addUser(@Valid @RequestBody User user){
         userRepository.save(user);
-        return new ResponseEntity<String>("User added.",HttpStatus.OK);
+        return new ResponseEntity<>("User added.",HttpStatus.OK);
     }
 
     @GetMapping("/getUser/{id}")
@@ -51,12 +48,12 @@ public class UserRest {
         userRepository.delete(userRepository
                 .findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found")));
-        return new ResponseEntity<String>("User Deleted",HttpStatus.OK);
+        return new ResponseEntity<>("User Deleted",HttpStatus.OK);
     }
 
     @ExceptionHandler
     public ResponseEntity<UserNotFoundError> handleUserNotFound(UserNotFoundException exc){
-        return new ResponseEntity<UserNotFoundError>(
+        return new ResponseEntity<>(
                 new UserNotFoundError("error", exc.getMessage()),
                 HttpStatus.NOT_FOUND
         );
@@ -65,16 +62,14 @@ public class UserRest {
     @ExceptionHandler
     public ResponseEntity<UserAddError> handleAddUser(MethodArgumentNotValidException exc){
 
-        List<String> excs=new LinkedList<>();
-        excs.addAll(exc.getBindingResult()
+        List<String> excs = exc.getBindingResult()
                 .getAllErrors().stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList()));
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toCollection(LinkedList::new));
 
-        return new ResponseEntity<UserAddError>(
+        return new ResponseEntity<>(
                 new UserAddError("error", excs),
                 HttpStatus.BAD_REQUEST
         );
-
     }
 }
