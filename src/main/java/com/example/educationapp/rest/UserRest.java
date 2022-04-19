@@ -36,6 +36,15 @@ public class UserRest {
         return new ResponseEntity<>("User added.",HttpStatus.OK);
     }
 
+    @PutMapping("/updateUser/{id}")
+    ResponseEntity<String> updateUser(@Valid @RequestBody User user, @PathVariable int id){
+        userRepository.delete(userRepository
+                .findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found.")));
+        userRepository.save(user);
+        return new ResponseEntity<>("User Updated", HttpStatus.OK);
+    }
+
     @GetMapping("/getUser/{id}")
     User getUser(@PathVariable int id){
         return userRepository
