@@ -38,10 +38,9 @@ public class UserRest {
 
     @PutMapping("/updateUser/{id}")
     ResponseEntity<String> updateUser(@Valid @RequestBody User user, @PathVariable int id){
-        userRepository.delete(userRepository
-                .findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found.")));
-        userRepository.save(user);
+        userRepository.findById(id)
+                        .orElseThrow(() -> new UserNotFoundException("User Not Found!"));
+        userRepository.updateUserById(id, user);
         return new ResponseEntity<>("User Updated", HttpStatus.OK);
     }
 

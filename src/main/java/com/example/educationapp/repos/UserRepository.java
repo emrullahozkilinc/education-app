@@ -6,8 +6,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
+
 public interface UserRepository extends JpaRepository<User, Integer> {
+    @Transactional
     @Modifying
-    @Query("update User u set u.name = nuser.name, u.username = ?2 where u.id = ?3 ")
+    @Query("update User u " +
+            "set u.name = :#{#nuser.name}, " +
+            "u.username = :#{#nuser.username}, " +
+            "u.password = :#{#nuser.password}, " +
+            "u.type = :#{#nuser.type} " +
+            "where u.id = :uid")
     void updateUserById(@Param("uid") int id, @Param("nuser") User user);
 }
