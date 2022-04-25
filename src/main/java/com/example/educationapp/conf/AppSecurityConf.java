@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,6 +22,7 @@ import static com.example.educationapp.enums.UserRoles.STUDENT;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppSecurityConf extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -35,10 +38,10 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/getUsers","/getUser/**").hasAuthority(USER_READ.getPermission())
-                .antMatchers(HttpMethod.DELETE, "/delUser/**").hasAuthority(USER_DELETE.getPermission())
-                .antMatchers(HttpMethod.POST, "/addUser/**").hasAuthority(USER_WRITE.getPermission())
-                .antMatchers(HttpMethod.PUT, "/updateUser/**").hasAuthority(USER_UPDATE.getPermission())
+//                .antMatchers(HttpMethod.GET, "/getUsers","/getUser/**").hasAuthority(USER_READ.getPermission())  // If any permission conflict each other spring applies above.
+//                .antMatchers(HttpMethod.DELETE, "/delUser/**").hasAuthority(USER_DELETE.getPermission())
+//                .antMatchers(HttpMethod.POST, "/addUser/**").hasAuthority(USER_WRITE.getPermission())
+//                .antMatchers(HttpMethod.PUT, "/updateUser/**").hasAuthority(USER_UPDATE.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()
