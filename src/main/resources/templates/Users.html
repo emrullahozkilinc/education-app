@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel=”stylesheet” href=”https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css”rel=”nofollow” integrity=”sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm”>
+</head>
+<body>
+    <div id="myDynamicTable" class="table table-striped", align="center"></div>
+
+    <script>
+        function addTable() {
+            const myTableDiv = document.getElementById("myDynamicTable");
+
+            const table = document.createElement('TABLE');
+
+            const tableHead = document.createElement('THEAD');
+            table.appendChild(tableHead);
+
+            const thds = ['ID', 'Name', 'Username', 'Password', 'Type', 'Actions']
+
+            const trh = document.createElement('TR');
+            tableHead.appendChild(trh);
+
+            for (let i = 0; i < 6; i++) {
+                const td = document.createElement('TD');
+                td.appendChild(document.createTextNode(thds[i]));
+                trh.appendChild(td);
+            }
+
+            const tableBody = document.createElement('TBODY');
+            table.appendChild(tableBody);
+
+
+
+            fetch('http://localhost:8080/getUsers')
+                .then(response => response.json())
+                .then(users => users.forEach( (u)  => {
+                    let item = [u.id, u.name, u.username, u.password, u.type]
+
+                    const tr = document.createElement('TR');
+                    tableBody.appendChild(tr);
+
+                    for (let j = 0; j < 5; j++) {
+                        const td = document.createElement('TD');
+                        td.appendChild(document.createTextNode(item[j]));
+                        tr.appendChild(td);
+                    }
+
+                    const tdh = document.createElement('TD');
+                    tr.appendChild(tdh)
+                    const actionButtonEdit = document.createElement('BUTTON');
+                    const actionButtonDelete = document.createElement('BUTTON');
+                    actionButtonEdit.appendChild(document.createTextNode("Edit"));
+                    actionButtonDelete.appendChild(document.createTextNode("Delete"));
+                    tdh.appendChild(actionButtonEdit);
+                    tdh.appendChild(actionButtonDelete);
+
+                    actionButtonEdit.setAttribute("class", "btn btn-primary");
+                    actionButtonDelete.setAttribute("class", "btn btn-danger");
+                }));
+
+            myTableDiv.appendChild(table);
+        }
+        addTable();
+    </script>
+</body>
+<script src="https://kit.fontawesome.com/c8d8bc1ac5.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</html>
