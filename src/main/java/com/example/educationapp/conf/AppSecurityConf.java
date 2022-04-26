@@ -14,6 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.example.educationapp.enums.UserPermissions.*;
 import static com.example.educationapp.enums.UserPermissions.USER_UPDATE;
@@ -45,9 +49,21 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/users", true);
+                    .formLogin()
+                    .loginPage("/login").permitAll()
+                    .defaultSuccessUrl("/users", true)
+                .and()
+                    .rememberMe() //session will expire after 2 weeks.
+                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+                    .key("secured")
+                .and()
+                    .logout()
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Because of csrf is disable we should send logout with GET method.
+                    .clearAuthentication(true)                                                          // If csrf was enabled we must change this POST. Because our request
+                    .invalidateHttpSession(true)                                                        // should send a CSRF token with request.
+                    .deleteCookies("JSESSIONID", "remember-me")
+                    .logoutSuccessUrl("/login");
     }
 
     @Override
