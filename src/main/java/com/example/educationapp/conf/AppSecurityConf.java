@@ -52,39 +52,21 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                     .formLogin()
                     .loginPage("/login").permitAll()
                     .defaultSuccessUrl("/users", true)
+                    .usernameParameter("username")  //Name of username input in login form.
+                    .passwordParameter("password")  //Name of password input in login form.
                 .and()
                     .rememberMe() //session will expire after 2 weeks.
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
                     .key("secured")
+                    .rememberMeParameter("remember-me") //Name of remember-me checkbox in login form.
                 .and()
                     .logout()
                     .logoutUrl("/logout")
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Because of csrf is disable we should send logout with GET method.
                     .clearAuthentication(true)                                                          // If csrf was enabled we must change this POST. Because our request
-                    .invalidateHttpSession(true)                                                        // should send a CSRF token with request.
+                    .invalidateHttpSession(true)                                                        // should send a CSRF token with request. And in logout button in Users.html page.
                     .deleteCookies("JSESSIONID", "remember-me")
                     .logoutSuccessUrl("/login");
     }
 
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails student = User.builder()
-                .username("dossantos27131")
-                .password(passwordEncoder.encode("654512"))
-//                .roles(STUDENT.name())
-                .authorities(STUDENT.getGrantedAuth())
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("531415"))
-//                .roles(ADMIN.name())
-                .authorities(ADMIN.getGrantedAuth())
-                .build();
-
-        return new InMemoryUserDetailsManager(
-            student, admin
-        );
-    }
 }
