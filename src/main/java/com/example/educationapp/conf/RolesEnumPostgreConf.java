@@ -35,7 +35,7 @@ public class RolesEnumPostgreConf extends EnumType {
         String role = ((String[]) array.getArray())[0];
         role = role.substring(5,role.length());
 
-        return role;
+        return UserRoles.valueOf(role);
     }
 
     @Override

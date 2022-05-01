@@ -35,13 +35,17 @@ public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter 
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
         try {
+            /* For chrome requests.
             byte[] b = request.getInputStream().readAllBytes();
             String[] reqbody = new String(b).split("&");
+            Arrays.stream(reqbody).forEach(System.out::println);
             String username = reqbody[0].substring(9);
-            String password = reqbody[1].substring(9);;
-
+            String password = reqbody[1].substring(9);
             UserPassAuthReq authReq = new UserPassAuthReq(username, password);
+            */
 
+            UserPassAuthReq authReq = new ObjectMapper()
+                    .readValue(request.getInputStream(), UserPassAuthReq.class);
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     authReq.getUsername(),
@@ -66,7 +70,7 @@ public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter 
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
-                .signWith(SignatureAlgorithm.HS256, Keys.hmacShaKeyFor("knjksufhlıweuhndsbnfakbdsfnlıuasbfdıasbfeıufbnjuafıbsd".getBytes()))
+                .signWith(Keys.hmacShaKeyFor("knjksufhlıweuhndsbnfakbdsfnluasbfdıasbfeufbnjuafbsd".getBytes()))
                 .compact();
         response.addHeader("Authorization", "Bearer " + token);
     }

@@ -1,6 +1,7 @@
 package com.example.educationapp.conf;
 
 import com.example.educationapp.exceptionhandler.AuthFailHandle;
+import com.example.educationapp.jwt.JWTTokenVerifier;
 import com.example.educationapp.jwt.JWTUserPassAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JWTUserPassAuthFilter(authenticationManager()))
+                .addFilterAfter(new JWTTokenVerifier(), JWTUserPassAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*", "/login", "/logout").permitAll()
                 .antMatchers("/getStudents").hasAuthority(USER_READ.getPermission())
