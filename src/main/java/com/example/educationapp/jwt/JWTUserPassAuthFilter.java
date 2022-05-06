@@ -1,5 +1,6 @@
 package com.example.educationapp.jwt;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter {
@@ -44,8 +47,23 @@ public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter 
             UserPassAuthReq authReq = new UserPassAuthReq(username, password);
             */
 
-            UserPassAuthReq authReq = new ObjectMapper()
-                    .readValue(request.getInputStream(), UserPassAuthReq.class);
+            HashMap<String, String> reqKeysVals = null;
+            ObjectMapper mapper = new ObjectMapper();
+            UserPassAuthReq authReq = null;
+            String requestBody = new String(request.getInputStream().readAllBytes());
+            if(!requestBody.startsWith("{")){
+                reqKeysVals = new HashMap<>();
+                for(String kv: requestBody.split("&")){
+                    String key = kv.split("=")[0];
+                    String value = kv.split("=")[1];
+                    reqKeysVals.put(key, value);
+                }
+                authReq = mapper.convertValue(reqKeysVals, UserPassAuthReq.class);
+            }else {
+                System.err.println(requestBody);
+                authReq = mapper.readValue(requestBody, UserPassAuthReq.class);
+
+            }
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     authReq.getUsername(),
