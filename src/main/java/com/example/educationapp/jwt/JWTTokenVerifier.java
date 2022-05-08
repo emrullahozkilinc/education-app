@@ -30,6 +30,9 @@ public class JWTTokenVerifier extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("authorization");
 
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+
         if (Strings.isNullOrEmpty(authHeader) || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
             return;

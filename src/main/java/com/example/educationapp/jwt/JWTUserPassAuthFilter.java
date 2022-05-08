@@ -38,32 +38,10 @@ public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter 
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
         try {
-            /* For chrome requests.
-            byte[] b = request.getInputStream().readAllBytes();
-            String[] reqbody = new String(b).split("&");
-            Arrays.stream(reqbody).forEach(System.out::println);
-            String username = reqbody[0].substring(9);
-            String password = reqbody[1].substring(9);
-            UserPassAuthReq authReq = new UserPassAuthReq(username, password);
-            */
-
-            HashMap<String, String> reqKeysVals = null;
-            ObjectMapper mapper = new ObjectMapper();
-            UserPassAuthReq authReq = null;
-            String requestBody = new String(request.getInputStream().readAllBytes());
-            if(!requestBody.startsWith("{")){
-                reqKeysVals = new HashMap<>();
-                for(String kv: requestBody.split("&")){
-                    String key = kv.split("=")[0];
-                    String value = kv.split("=")[1];
-                    reqKeysVals.put(key, value);
-                }
-                authReq = mapper.convertValue(reqKeysVals, UserPassAuthReq.class);
-            }else {
-                System.err.println(requestBody);
-                authReq = mapper.readValue(requestBody, UserPassAuthReq.class);
-
-            }
+            UserPassAuthReq authReq = new ObjectMapper().readValue(
+                    request.getInputStream(),
+                    UserPassAuthReq.class
+            );
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     authReq.getUsername(),
@@ -72,7 +50,7 @@ public class JWTUserPassAuthFilter extends UsernamePasswordAuthenticationFilter 
 
             return authManager.authenticate(auth);
         }catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }

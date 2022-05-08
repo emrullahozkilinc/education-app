@@ -1,32 +1,24 @@
 package com.example.educationapp.conf;
 
-import com.example.educationapp.exceptionhandler.AuthFailHandle;
 import com.example.educationapp.jwt.JWTTokenVerifier;
 import com.example.educationapp.jwt.JWTUserPassAuthFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.util.concurrent.TimeUnit;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.example.educationapp.enums.UserPermissions.*;
-import static com.example.educationapp.enums.UserPermissions.USER_UPDATE;
-import static com.example.educationapp.enums.UserRoles.ADMIN;
-import static com.example.educationapp.enums.UserRoles.STUDENT;
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +28,7 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JWTUserPassAuthFilter(authenticationManager()))
@@ -44,8 +36,7 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*", "/login", "/logout").permitAll()
                 .antMatchers("/getStudents").hasAuthority(USER_READ.getPermission())
-                .anyRequest()
-                .authenticated();
+                .anyRequest().authenticated();
 
                 /*
                 .antMatchers(HttpMethod.GET, "/getUsers","/getUser/**").hasAuthority(USER_READ.getPermission())  // If any permission conflict each other spring applies above.
