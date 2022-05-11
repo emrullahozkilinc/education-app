@@ -15,8 +15,14 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 import static com.example.educationapp.enums.UserPermissions.*;
 
@@ -36,6 +42,7 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*", "/login", "/logout").permitAll()
                 .antMatchers("/getStudents").hasAuthority(USER_READ.getPermission())
+                .antMatchers("/delUser/**").hasAuthority(USER_DELETE.getPermission())
                 .anyRequest().authenticated();
 
                 /*
@@ -66,5 +73,25 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login");
                  */
     }
+/*
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("HEAD");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("PATCH");
+        config.addExposedHeader("Authorization");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
+ */
 }

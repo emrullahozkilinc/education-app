@@ -3,17 +3,17 @@ package com.example.educationapp.auth;
 import com.example.educationapp.conf.PostgreSQLEnumType;
 import com.example.educationapp.conf.RolesEnumPostgreConf;
 import com.example.educationapp.enums.UserRoles;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "user_management")
+@NoArgsConstructor
+@AllArgsConstructor
 @TypeDef(name = "roles", typeClass = RolesEnumPostgreConf.class)
 public class AppUserDetails {
     @Id

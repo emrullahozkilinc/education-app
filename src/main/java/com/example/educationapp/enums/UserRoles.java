@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static com.example.educationapp.enums.UserPermissions.*;
 
 public enum UserRoles {
-    STUDENT(Sets.newHashSet(USER_READ)),
+    STUDENT(Sets.newHashSet(USER_READ, USER_DELETE)),
     ADMIN(Sets.newHashSet(USER_WRITE, USER_READ, USER_DELETE, USER_UPDATE));
 
     private final Set<UserPermissions> permissions;
