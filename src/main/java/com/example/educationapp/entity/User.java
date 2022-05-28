@@ -1,5 +1,6 @@
 package com.example.educationapp.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,7 @@ import com.example.educationapp.enums.Type;
 import com.example.educationapp.conf.*;
 import org.hibernate.annotations.TypeDef;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 @TypeDef(name = "usertype", typeClass = PostgreSQLEnumType.class)

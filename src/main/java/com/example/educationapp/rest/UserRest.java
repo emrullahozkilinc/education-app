@@ -1,9 +1,7 @@
 package com.example.educationapp.rest;
 
 import com.example.educationapp.entity.User;
-import com.example.educationapp.exception.UserAddError;
-import com.example.educationapp.exception.UserNotFoundError;
-import com.example.educationapp.exception.UserNotFoundException;
+import com.example.educationapp.exception.*;
 import com.example.educationapp.repos.UserRepository;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,6 +84,22 @@ public class UserRest {
 
         return new ResponseEntity<>(
                 new UserAddError("error", excs),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<UserUpdateError> handleUpdateUser(UserUpdateException exc){
+        System.err.println("sdvsd");
+        List<String> excs = new ArrayList<>(Collections.singleton(exc.getMessage()));
+                /*
+                .getBindingResult()
+                .getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toCollection(LinkedList::new));
+                */
+        return new ResponseEntity<>(
+                new UserUpdateError("error", excs),
                 HttpStatus.BAD_REQUEST
         );
     }
