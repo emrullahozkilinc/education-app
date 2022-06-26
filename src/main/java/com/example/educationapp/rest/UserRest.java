@@ -3,6 +3,8 @@ package com.example.educationapp.rest;
 import com.example.educationapp.entity.User;
 import com.example.educationapp.exception.*;
 import com.example.educationapp.repos.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(value = "User controller for table operations")
 @RestController
 @CrossOrigin
 public class UserRest {
@@ -27,12 +30,14 @@ public class UserRest {
         this.userRepository = userRepository;
     }
 
+    @ApiOperation(value = "Get all users. Requires student or admin role")
     @GetMapping("/getUsers")
     @PreAuthorize("hasAuthority('user:read')")
     List<User> getUsers(){
         return userRepository.findAll();
     }
 
+    @ApiOperation(value = "Add user. Requires admin role.")
     @PostMapping("/addUser")
     @PreAuthorize("hasAuthority('user:write')")
     ResponseEntity<String> addUser(@Valid @RequestBody User user){
@@ -40,6 +45,7 @@ public class UserRest {
         return new ResponseEntity<>("User added.",HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Update user. Requires admin role.")
     @PutMapping("/updateUser/{id}")
     @PreAuthorize("hasAuthority('user:update')")
     ResponseEntity<String> updateUser(@Valid @RequestBody User user, @PathVariable int id){
@@ -49,6 +55,7 @@ public class UserRest {
         return new ResponseEntity<>("User Updated", HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get user by id. Requires admin or student role.")
     @GetMapping("/getUser/{id}")
     @PreAuthorize("hasAuthority('user:read')")
     User getUser(@PathVariable int id){
@@ -57,6 +64,7 @@ public class UserRest {
                 .orElseThrow(() ->new UserNotFoundException("User Not Found"));
     }
 
+    @ApiOperation(value = "Delete user. Requires admin role.")
     @DeleteMapping("/delUser/{id}")
     @PreAuthorize("hasAuthority('user:delete')")
     ResponseEntity<String> delUser(@PathVariable int id){

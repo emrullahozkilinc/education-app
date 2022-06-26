@@ -40,7 +40,7 @@ public class AppSecurityConf extends WebSecurityConfigurerAdapter {
                 .addFilter(new JWTUserPassAuthFilter(authenticationManager()))
                 .addFilterAfter(new JWTTokenVerifier(), JWTUserPassAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*", "/login", "/logout").permitAll()
+                .antMatchers("/", "index", "/css/*", "/js/*", "/login", "/logout", "/v2/api-docs").permitAll()
                 .antMatchers("/delUser/**").hasAuthority(USER_DELETE.getPermission())
                 .anyRequest().authenticated();
 
